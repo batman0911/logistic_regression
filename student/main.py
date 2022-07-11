@@ -63,9 +63,10 @@ if __name__ == '__main__':
     w1 = w[-1][1][0]
     threshold = -w0 / w1
     yy = sigmoid(w0 + w1 * xx)
-    plt.axis([-2, 8, -1, 2])
+    plt.axis([-1, 7, -0.2, 1.2])
     plt.plot(xx, yy, 'g-', linewidth=2)
     plt.plot(threshold, .5, 'y^', markersize=8)
     plt.xlabel('studying hours')
     plt.ylabel('predicted probability of pass')
+    plt.title('logistic regression for student marks')
     plt.show()
