@@ -1,4 +1,5 @@
 import numpy as np
+import abc
 
 
 def sigmoid(s):
@@ -23,33 +24,35 @@ def logistic_sigmoid_GD(X, y, w_init, eta, tol=1e-3, max_count=10000):
     return [w, i]
 
 
-def gd_logistic_regression(X, y, w_init, eta, tol=1e-3, max_count=10000):
-    N = X.shape[0]
-    d = X.shape[1]
-    count = 0
-    w = w_init
-    while count < max_count:
-        # sum = np.zeros((d, 1))
-        # # rand_id = np.random.permutation(N)
-        # for i in range(N):
-        #     # xi = X[:, i].reshape(d, 1)
-        #     xi = X[i, :].reshape(d, 1)
-        #     yi = y[i]
-        #     grad = (sigmoid(np.dot(w.T, xi)) - yi) * xi
-        #     sum += eta * grad
-        #
-        # w = w - sum
-        # if np.linalg.norm(sum) < tol:
-        #     print(f'end before max count: {count}')
-        #     return w
-        # count += 1
-        grad = np.dot(X.T, sigmoid(np.dot(X, w)) - y)
-        w = w - eta * grad
-        count += 1
-        if np.linalg.norm(grad) < tol:
-            return [w, count]
+class LogisticRegressionOpt:
+    def __init__(self,
+                 tol=1e-4,
+                 max_iter=1000,
+                 eta=0.05,
+                 solver='gd'):
+        self.tol = tol
+        self.max_iter = max_iter
+        self.eta = eta
+        self.solver = solver
 
-    return [w, count]
+    def fit(self, X, y, w_init):
+        if 'gd' == self.solver:
+            return self.gd_logistic_regression(X, y, w_init,
+                                               eta=self.eta,
+                                               tol=self.tol,
+                                               max_iter=self.max_iter)
+        else:
+            raise 'unsupported alg'
 
+    def gd_logistic_regression(X, y, w_init, eta=0.05, tol=1e-3, max_iter=50000):
+        count = 0
+        w = w_init
+        while count < max_iter:
+            grad = np.dot(X.T, sigmoid(np.dot(X, w)) - y) / X.shape[0]
+            w = w - eta * grad
+            count += 1
+            if np.linalg.norm(grad) < tol:
+                return [w, count]
 
+        return [w, count]
 

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression, LinearRegression
 import matplotlib.pyplot as plt
+import voice_gender.regression as rg
 
 np.random.seed(2)
 
@@ -65,19 +66,22 @@ def test_sgd(z):
     y = np.array([0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1])
     X = np.concatenate((np.ones((1, X.shape[1])), X), axis=0)
 
+    X = X.T
+    y = y.reshape((X.shape[0], 1))
+
     print(f'X shape: {X.shape}')
 
     eta = 0.05
     d = X.shape[0]
-    w_init = np.random.randn(d, 1)
+    w_init = np.ones((X.shape[1], 1))
     print(f'w_init: {w_init}')
 
-    w_sgd = sgd_logistic_regression(X, y, w_init, eta)
-    print(f'sgd intercept: {w_sgd[-1]}')
+    w_sgd = rg.gd_logistic_regression(X, y, w_init, eta)
+    print(f'sgd intercept: {w_sgd}')
 
-    print(f'linear element {z}: {sigmoid(w_sgd[-1][0] + w_sgd[-1][1] * z)}')
+    # print(f'linear element {z}: {sigmoid(w_sgd[-1][0] + w_sgd[-1][1] * z)}')
 
-    plot_data(X, y, w_sgd)
+    # plot_data(X, y, w_sgd)
 
 
 def test_sklearn(z):
