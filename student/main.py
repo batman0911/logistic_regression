@@ -76,8 +76,12 @@ def test_sgd(z):
     w_init = np.ones((X.shape[1], 1))
     print(f'w_init: {w_init}')
 
-    w_sgd = rg.gd_logistic_regression(X, y, w_init, eta)
-    print(f'sgd intercept: {w_sgd}')
+    gdlogreg = rg.LogisticRegressionOpt(solver='gd', tol=1e-4, max_iter=1000000, eta=0.05)
+    gdlogreg.fit(X, y, w_init)
+
+    print(f'sgd intercept: {gdlogreg.w}')
+    print(f'counts: {gdlogreg.count}')
+    print(f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
 
     # print(f'linear element {z}: {sigmoid(w_sgd[-1][0] + w_sgd[-1][1] * z)}')
 
