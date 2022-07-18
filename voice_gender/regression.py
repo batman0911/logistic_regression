@@ -1,6 +1,8 @@
 import numpy as np
 import abc
 
+np.random.seed(2)
+
 
 def sigmoid(s):
     return 1 / (1 + np.exp(-s))
@@ -33,10 +35,11 @@ def logistic_grad(X, y, w):
 
 class LogisticRegressionOpt:
     def __init__(self,
+                 solver='gd',
                  tol=1e-4,
                  max_iter=1000,
                  eta=0.05,
-                 solver='gd'):
+                 check_after=10):
         self.tol = tol
         self.max_iter = max_iter
         self.eta = eta
@@ -45,6 +48,7 @@ class LogisticRegressionOpt:
         self.w = None
         self.count = 0
         self.cost_list = []
+        self.check_after = check_after
 
     def fit(self, X, y, w_init):
         if 'gd' == self.solver:
@@ -60,8 +64,8 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            y_pred = predict(X, self.w)
             if self.count % 100 == 0:
+                y_pred = predict(X, self.w)
                 cost = calc_error(y_pred, y)
                 self.cost_list.append(cost)
 
@@ -79,10 +83,24 @@ class LogisticRegressionOpt:
         self.w = w_init
         N = X.shape[0]
         d = X.shape[1]
+
         while self.count < max_iter:
             mix_id = np.random.permutation(N)
             for i in mix_id:
-                pass
+                xi = X[i, :].reshape(d, 1)
+                yi = y[i].reshape(1, 1)
+                zi = sigmoid(np.dot(self.w.T, xi))
+                self.grad = (yi - zi)*xi
+                self.w = self.w + eta*self.grad
+                self.count += 1
 
+                if self.count % self.check_after == 0:
+                    y_pred = predict(X, self.w)
+                    cost = calc_error(y_pred, y)
+                    self.cost_list.append(cost)
+                    if np.linalg.norm(self.grad) < tol:
+                        return [self.w, self.count, self.cost_list]
+
+        return [self.w, self.count, self.cost_list]
 
 
