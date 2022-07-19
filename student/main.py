@@ -76,7 +76,7 @@ def test_sgd(z):
     w_init = np.ones((X.shape[1], 1))
     print(f'w_init: {w_init}')
 
-    gdlogreg = rg.LogisticRegressionOpt(solver='sgd', tol=1e-4, max_iter=100000, eta=0.05, check_after=1)
+    gdlogreg = rg.LogisticRegressionOpt(solver='bgd', tol=1e-4, max_iter=100000, eta=0.05, check_after=1)
     gdlogreg.fit(X, y, w_init)
 
     print(f'sgd intercept: {gdlogreg.w}')

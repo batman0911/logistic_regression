@@ -36,7 +36,7 @@ if __name__ == '__main__':
     X_train, y_train, X_test, y_test = load_data()
     eta = 0.05
     w_init = np.ones((X_train.shape[1], 1))
-    gdlogreg = rg.LogisticRegressionOpt(solver='gd', tol=1e-4, max_iter=100000, eta=0.05)
+    gdlogreg = rg.LogisticRegressionOpt(solver='bgd', tol=1e-4, max_iter=100000, eta=0.05)
     gdlogreg.fit(X_train, y_train, w_init)
     print(f'sgd intercept: {gdlogreg.w}')
     print(f'counts: {gdlogreg.count}')

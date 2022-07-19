@@ -32,21 +32,6 @@ def move_with_direction(w, step_size, grad):
     return w - step_size * grad
 
 
-def back_tracking_step_size(X, y, w, grad):
-    step_size = 0.1
-    alpha = beta = 0.5
-    count = 0
-    max_iter = 10000
-    while cost_function(X, y, move_with_direction(w, step_size, grad)) > cost_function(X, y,
-                                                                                       w) - alpha * step_size * np.dot(
-            grad.T, grad):
-        step_size = beta * step_size
-        count += 1
-        if count > max_iter:
-            return step_size
-    return step_size
-
-
 class LogisticRegressionOpt:
     def __init__(self,
                  solver='gd',
@@ -61,8 +46,24 @@ class LogisticRegressionOpt:
         self.grad = None
         self.w = None
         self.count = 0
+        self.inner_count = 0
         self.cost_list = []
         self.check_after = check_after
+
+
+    def back_tracking_step_size(self, X, y, w, grad):
+        step_size = 1
+        alpha = beta = 0.5
+        count = 0
+        max_iter = 10000
+        while cost_function(X, y, move_with_direction(w, step_size, grad)) > \
+                cost_function(X, y, w) - alpha * step_size * np.dot(grad.T, grad):
+            step_size = beta * step_size
+            count += 1
+            self.inner_count += 1
+            if count > max_iter:
+                return step_size
+        return step_size
 
     def fit(self, X, y, w_init):
         if 'gd' == self.solver:
@@ -71,6 +72,9 @@ class LogisticRegressionOpt:
         elif 'sgd' == self.solver:
             return self.sgd_logistic_regression(X, y, w_init,
                                                 self.eta, self.tol, self.max_iter)
+        elif 'bgd' == self.solver:
+            return self.gd_back_tracking_logistic_regression(X, y, w_init,
+                                                             self.tol, self.max_iter)
         else:
             raise 'unsupported alg'
 
@@ -121,13 +125,13 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            if self.count % 100 == 0:
+            if self.count % 2 == 0:
                 y_pred = predict(X, self.w)
                 cost = calc_error(y_pred, y)
                 self.cost_list.append(cost)
 
             self.grad = logistic_grad(X, y, self.w)
-            self.w = self.w - back_tracking_step_size(X, y, self.w, self.grad) * self.grad
+            self.w = self.w - self.back_tracking_step_size(X, y, self.w, self.grad) * self.grad
             self.count += 1
 
             if np.linalg.norm(self.grad) < tol:
