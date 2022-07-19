@@ -1,22 +1,10 @@
 import numpy as np
-import abc
 
 np.random.seed(2)
 
 
 def sigmoid(s):
     return 1 / (1 + np.exp(-s))
-
-
-def logistic_sigmoid_GD(X, y, w_init, eta, tol=1e-3, max_count=10000):
-    w = w_init
-    for i in range(max_count):
-        grad = np.dot(X.T, sigmoid(np.dot(X, w)) - y)
-        w_new = w - eta * grad
-        if np.linalg.norm(grad) / len(grad) < tol:
-            break
-        w = w_new
-    return [w, i]
 
 
 def predict(X, w):
@@ -31,6 +19,32 @@ def calc_error(y_pred, y_label):
 
 def logistic_grad(X, y, w):
     return np.dot(X.T, sigmoid(np.dot(X, w)) - y) / X.shape[0]
+
+
+def cost_function(X, y, w):
+    y_pred = predict(X, w)
+    cost = -y * np.log(y_pred) - (1 - y) * np.log(1 - y_pred)
+    cost = cost.sum() / len(y)
+    return cost
+
+
+def move_with_direction(w, step_size, grad):
+    return w - step_size * grad
+
+
+def back_tracking_step_size(X, y, w, grad):
+    step_size = 0.1
+    alpha = beta = 0.5
+    count = 0
+    max_iter = 10000
+    while cost_function(X, y, move_with_direction(w, step_size, grad)) > cost_function(X, y,
+                                                                                       w) - alpha * step_size * np.dot(
+            grad.T, grad):
+        step_size = beta * step_size
+        count += 1
+        if count > max_iter:
+            return step_size
+    return step_size
 
 
 class LogisticRegressionOpt:
@@ -60,7 +74,7 @@ class LogisticRegressionOpt:
         else:
             raise 'unsupported alg'
 
-    def gd_logistic_regression(self, X, y, w_init, eta, tol, max_iter):
+    def gd_logistic_regression(self, X, y, w_init, step_size, tol, max_iter):
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
@@ -70,7 +84,7 @@ class LogisticRegressionOpt:
                 self.cost_list.append(cost)
 
             self.grad = logistic_grad(X, y, self.w)
-            self.w = self.w - eta * self.grad
+            self.w = self.w - step_size * self.grad
             self.count += 1
 
             if np.linalg.norm(self.grad) < tol:
@@ -78,7 +92,7 @@ class LogisticRegressionOpt:
 
         return [self.w, self.count, self.cost_list]
 
-    def sgd_logistic_regression(self, X, y, w_init, eta, tol, max_iter):
+    def sgd_logistic_regression(self, X, y, w_init, step_size, tol, max_iter):
         self.count = 0
         self.w = w_init
         N = X.shape[0]
@@ -90,8 +104,8 @@ class LogisticRegressionOpt:
                 xi = X[i, :].reshape(d, 1)
                 yi = y[i].reshape(1, 1)
                 zi = sigmoid(np.dot(self.w.T, xi))
-                self.grad = (yi - zi)*xi
-                self.w = self.w + eta*self.grad
+                self.grad = (yi - zi) * xi
+                self.w = self.w + step_size * self.grad
                 self.count += 1
 
                 if self.count % self.check_after == 0:
@@ -103,4 +117,20 @@ class LogisticRegressionOpt:
 
         return [self.w, self.count, self.cost_list]
 
+    def gd_back_tracking_logistic_regression(self, X, y, w_init, tol, max_iter):
+        self.count = 0
+        self.w = w_init
+        while self.count < max_iter:
+            if self.count % 100 == 0:
+                y_pred = predict(X, self.w)
+                cost = calc_error(y_pred, y)
+                self.cost_list.append(cost)
 
+            self.grad = logistic_grad(X, y, self.w)
+            self.w = self.w - back_tracking_step_size(X, y, self.w, self.grad) * self.grad
+            self.count += 1
+
+            if np.linalg.norm(self.grad) < tol:
+                return [self.w, self.count, self.cost_list]
+
+        return [self.w, self.count, self.cost_list]
