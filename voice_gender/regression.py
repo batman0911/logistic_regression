@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 np.random.seed(2)
+np.seterr(divide='ignore', over='ignore', invalid='ignore')
 
 
 def sigmoid(s):
@@ -84,7 +85,8 @@ class LogisticRegressionOpt:
         return step_size
 
     def fit(self, X, y, w_init):
-        # print(f'initial cost: {cost_function(X, y, w_init)}')
+        # disable this in benchmark
+        print(f'initial cost: {cost_function(X, y, w_init)}')
         if 'gd' == self.solver:
             return self.gd_logistic_regression(X, y, w_init,
                                                self.step_size, self.tol, self.max_iter)
@@ -105,23 +107,21 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            self.grad = logistic_grad(X, y, self.w)
-            self.w = self.w - step_size * self.grad
-            self.count += 1
+            self.handle_gd(X, step_size, y)
 
             if self.count % self.check_after == 0:
-                y_pred = predict(X, self.w)
-                cost = calc_error(y_pred, y)
-                self.cost_list.append(cost)
-                print(f'count: {self.count}, cost: {cost}, '
-                      f'grad norm: {np.linalg.norm(self.grad)}')
-
-            grad_norm = np.linalg.norm(self.grad)
-            self.grad_norm_list.append(grad_norm)
-            if grad_norm < tol:
-                return [self.w, self.count, self.cost_list]
+                grad_norm = np.linalg.norm(self.grad)
+                # disable this in benchmark
+                self.cal_metrics(X, grad_norm, y)
+                if grad_norm < tol:
+                    return [self.w, self.count, self.cost_list]
 
         return [self.w, self.count, self.cost_list]
+
+    def handle_gd(self, X, step_size, y):
+        self.grad = logistic_grad(X, y, self.w)
+        self.w = self.w - step_size * self.grad
+        self.count += 1
 
     def sgd_logistic_regression(self, X, y, w_init, step_size, tol, max_iter):
         self.count = 0
@@ -142,12 +142,9 @@ class LogisticRegressionOpt:
                 self.count += 1
 
                 if self.count % self.check_after == 0:
-                    y_pred = predict(X, self.w)
-                    cost = calc_error(y_pred, y)
-                    self.cost_list.append(cost)
-                    print(f'count: {self.count}, cost: {self.cost_list[-1]}, grad norm: {np.linalg.norm(self.grad)}')
                     grad_norm = np.linalg.norm(self.grad)
-                    self.grad_norm_list.append(grad_norm)
+                    # disable this in benchmark
+                    self.cal_metrics(X, grad_norm, y)
                     if grad_norm < tol:
                         return [self.w, self.count, self.cost_list]
 
@@ -156,49 +153,46 @@ class LogisticRegressionOpt:
     def sgd_mini_batch_logistic_regression(self, X, y, w_init, step_size, tol, max_iter, batch_size):
         self.count = 0
         self.w = w_init
-        N = X.shape[0]
-        d = X.shape[1]
 
         while self.count < max_iter:
-            mix_id = np.random.permutation(N)
-            batch = mix_id[0:batch_size]
-            X_batch = X[batch, :]
-            y_batch = y[batch]
-            self.grad = logistic_grad(X_batch, y_batch, self.w)
-            self.w = self.w - step_size * self.grad
-            self.count += 1
+            X_batch, y_batch = self.get_training_batch(X, batch_size, y)
+
+            self.handle_gd(X_batch, step_size, y_batch)
 
             if self.count % self.check_after == 0:
-                y_pred = predict(X, self.w)
-                cost = calc_error(y_pred, y)
-                self.cost_list.append(cost)
-                # print(f'count: {self.count}, cost: {self.cost_list[-1]}, grad norm: {np.linalg.norm(self.grad)}')
                 grad_norm = np.linalg.norm(self.grad)
-                self.grad_norm_list.append(grad_norm)
+                # disable this in benchmark
+                self.cal_metrics(X, grad_norm, y)
                 if grad_norm < tol:
                     return [self.w, self.count, self.cost_list]
 
         return [self.w, self.count, self.cost_list]
+
+    def get_training_batch(self, X, batch_size, y):
+        mix_id = np.random.permutation(X.shape[0])
+        batch = mix_id[0:batch_size]
+        return X[batch, :], y[batch]
 
     def gd_back_tracking_logistic_regression(self, X, y, w_init, tol, max_iter):
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            self.grad = logistic_grad(X, y, self.w)
-            self.w = self.w - self.back_tracking_step_size(X, y, self.w, self.grad) * self.grad
-            self.count += 1
+            self.handle_gd(X, self.back_tracking_step_size(X, y, self.w, self.grad), y)
 
             if self.count % self.check_after == 0:
-                # y_pred = predict(X, self.w)
-                # cost = calc_error(y_pred, y)
-                # self.cost_list.append(cost)
-
-                # if self.count % (10*self.check_after) == 0:
-                #     print(f'count: {self.count}, cost: {cost}, grad norm: {np.linalg.norm(self.grad)}')
-
                 grad_norm = np.linalg.norm(self.grad)
-                self.grad_norm_list.append(grad_norm)
+                # disable this in benchmark
+                self.cal_metrics(X, grad_norm, y)
                 if grad_norm < tol:
                     return [self.w, self.count, self.cost_list]
 
         return [self.w, self.count, self.cost_list]
+
+    def cal_metrics(self, X, grad_norm, y):
+        y_pred = predict(X, self.w)
+        cost = calc_error(y_pred, y)
+        self.cost_list.append(cost)
+        # disable this in benchmark
+        if self.count % (10 * self.check_after) == 0:
+            print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
+        self.grad_norm_list.append(grad_norm)

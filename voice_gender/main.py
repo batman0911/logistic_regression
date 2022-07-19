@@ -27,11 +27,11 @@ def load_data():
     X = (X - np.min(X, axis=0)) / (np.max(X, axis=0) - np.min(X, axis=0))
     one = np.ones((X.shape[0], 1))
     X = np.concatenate((one, X), axis=1)
-    # X_train = X[:2000, :]
-    # X_test = X[-100:, :]
+    X_train = X[:2000, :]
+    X_test = X[-100:, :]
     y = y.reshape((X.shape[0], 1))
-    # y_train = y[:2000, :]
-    # y_test = y[-100:]
+    y_train = y[:2000, :]
+    y_test = y[-100:]
     # mix_id = np.random.permutation(X.shape[0])
     # batch_train = mix_id[0:3000]
     # batch_test = mix_id[3001:X.shape[0]]
@@ -40,7 +40,7 @@ def load_data():
     # y_train = y[batch_train]
     # X_test = X[batch_test, :]
     # y_test = y[batch_test]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
     return X_train, y_train, X_test, y_test
 
 
