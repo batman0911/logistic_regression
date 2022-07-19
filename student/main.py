@@ -116,4 +116,4 @@ def test_sklearn(z):
 
 if __name__ == '__main__':
     test_sgd(1.25)
-    test_sklearn([[1.25]])
+    # test_sklearn([[1.25]])
