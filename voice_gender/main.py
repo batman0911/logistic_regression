@@ -35,12 +35,16 @@ def load_data():
 if __name__ == '__main__':
     X_train, y_train, X_test, y_test = load_data()
     eta = 0.05
-    w_init = np.ones((X_train.shape[1], 1))
-    gdlogreg = rg.LogisticRegressionOpt(solver='bgd', tol=1e-4, max_iter=100000, eta=0.05)
+    # w_init = np.ones((X_train.shape[1], 1))
+    w_init = np.random.randn(X_train.shape[1], 1)
+    gdlogreg = rg.LogisticRegressionOpt(solver='sgd', tol=1e-3, max_iter=500000, step_size=0.05, check_after=100)
     gdlogreg.fit(X_train, y_train, w_init)
-    print(f'sgd intercept: {gdlogreg.w}')
-    print(f'counts: {gdlogreg.count}')
-    print(f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
+    # print(f'sgd intercept: {gdlogreg.w}')
+    # print(f'counts: {gdlogreg.count}')
+    # print(f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
+
+    print(f'complete, count: {gdlogreg.count}, final cost: {gdlogreg.cost_list[-1]}, '
+          f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
 
     plt.plot(range(len(gdlogreg.cost_list)), gdlogreg.cost_list)
     plt.show()

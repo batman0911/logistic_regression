@@ -37,11 +37,11 @@ class LogisticRegressionOpt:
                  solver='gd',
                  tol=1e-4,
                  max_iter=1000,
-                 eta=0.05,
+                 step_size=0.05,
                  check_after=10):
         self.tol = tol
         self.max_iter = max_iter
-        self.eta = eta
+        self.step_size = step_size
         self.solver = solver
         self.grad = None
         self.w = None
@@ -49,7 +49,6 @@ class LogisticRegressionOpt:
         self.inner_count = 0
         self.cost_list = []
         self.check_after = check_after
-
 
     def back_tracking_step_size(self, X, y, w, grad):
         step_size = 1
@@ -66,12 +65,13 @@ class LogisticRegressionOpt:
         return step_size
 
     def fit(self, X, y, w_init):
+        print(f'initial cost: {cost_function(X, y, w_init)}')
         if 'gd' == self.solver:
             return self.gd_logistic_regression(X, y, w_init,
-                                               self.eta, self.tol, self.max_iter)
+                                               self.step_size, self.tol, self.max_iter)
         elif 'sgd' == self.solver:
             return self.sgd_logistic_regression(X, y, w_init,
-                                                self.eta, self.tol, self.max_iter)
+                                                self.step_size, self.tol, self.max_iter)
         elif 'bgd' == self.solver:
             return self.gd_back_tracking_logistic_regression(X, y, w_init,
                                                              self.tol, self.max_iter)
@@ -82,14 +82,16 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            if self.count % 100 == 0:
-                y_pred = predict(X, self.w)
-                cost = calc_error(y_pred, y)
-                self.cost_list.append(cost)
-
             self.grad = logistic_grad(X, y, self.w)
             self.w = self.w - step_size * self.grad
             self.count += 1
+
+            if self.count % self.check_after == 0:
+                y_pred = predict(X, self.w)
+                cost = calc_error(y_pred, y)
+                self.cost_list.append(cost)
+                print(f'count: {self.count}, cost: {cost}, '
+                      f'grad norm: {np.linalg.norm(self.grad)}')
 
             if np.linalg.norm(self.grad) < tol:
                 return [self.w, self.count, self.cost_list]
@@ -108,14 +110,16 @@ class LogisticRegressionOpt:
                 xi = X[i, :].reshape(d, 1)
                 yi = y[i].reshape(1, 1)
                 zi = sigmoid(np.dot(self.w.T, xi))
-                self.grad = (yi - zi) * xi
-                self.w = self.w + step_size * self.grad
+                self.grad = (zi - yi) * xi
+                # self.w = self.w - self.back_tracking_step_size(X, y, self.w, self.grad) * self.grad
+                self.w = self.w - step_size * self.grad
                 self.count += 1
 
                 if self.count % self.check_after == 0:
                     y_pred = predict(X, self.w)
                     cost = calc_error(y_pred, y)
                     self.cost_list.append(cost)
+                    print(f'count: {self.count}, cost: {self.cost_list[-1]}, grad norm: {np.linalg.norm(self.grad)}')
                     if np.linalg.norm(self.grad) < tol:
                         return [self.w, self.count, self.cost_list]
 
@@ -125,14 +129,15 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            if self.count % 2 == 0:
-                y_pred = predict(X, self.w)
-                cost = calc_error(y_pred, y)
-                self.cost_list.append(cost)
-
             self.grad = logistic_grad(X, y, self.w)
             self.w = self.w - self.back_tracking_step_size(X, y, self.w, self.grad) * self.grad
             self.count += 1
+
+            if self.count % self.check_after == 0:
+                y_pred = predict(X, self.w)
+                cost = calc_error(y_pred, y)
+                self.cost_list.append(cost)
+                print(f'count: {self.count}, cost: {cost}, grad norm: {np.linalg.norm(self.grad)}')
 
             if np.linalg.norm(self.grad) < tol:
                 return [self.w, self.count, self.cost_list]
