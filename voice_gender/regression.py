@@ -49,6 +49,12 @@ def move_with_direction(w, step_size, grad):
     return w - step_size * grad
 
 
+def get_training_batch(X, batch_size, y):
+    mix_id = np.random.permutation(X.shape[0])
+    batch = mix_id[0:batch_size]
+    return X[batch, :], y[batch]
+
+
 class LogisticRegressionOpt:
     def __init__(self,
                  solver='gd',
@@ -156,7 +162,7 @@ class LogisticRegressionOpt:
         self.w = w_init
 
         while self.count < max_iter:
-            X_batch, y_batch = self.get_training_batch(X, batch_size, y)
+            X_batch, y_batch = get_training_batch(X, batch_size, y)
             self.grad = logistic_grad(X_batch, y_batch, self.w)
             self.handle_gd(step_size)
 
@@ -168,11 +174,6 @@ class LogisticRegressionOpt:
                     return [self.w, self.count, self.cost_list]
 
         return [self.w, self.count, self.cost_list]
-
-    def get_training_batch(self, X, batch_size, y):
-        mix_id = np.random.permutation(X.shape[0])
-        batch = mix_id[0:batch_size]
-        return X[batch, :], y[batch]
 
     def gd_back_tracking_logistic_regression(self, X, y, w_init, tol, max_iter):
         self.count = 0
@@ -195,6 +196,6 @@ class LogisticRegressionOpt:
         cost = calc_error(y_pred, y)
         self.cost_list.append(cost)
         # disable this in benchmark
-        # if self.count % (10 * self.check_after) == 0:
-        #     print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
+        if self.count % (10 * self.check_after) == 0:
+            print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
         self.grad_norm_list.append(grad_norm)
