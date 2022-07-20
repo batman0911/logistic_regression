@@ -86,7 +86,7 @@ class LogisticRegressionOpt:
 
     def fit(self, X, y, w_init):
         # disable this in benchmark
-        print(f'initial cost: {cost_function(X, y, w_init)}')
+        # print(f'initial cost: {cost_function(X, y, w_init)}')
         if 'gd' == self.solver:
             return self.gd_logistic_regression(X, y, w_init,
                                                self.step_size, self.tol, self.max_iter)
@@ -107,7 +107,8 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            self.handle_gd(X, step_size, y)
+            self.grad = logistic_grad(X, y, self.w)
+            self.handle_gd(step_size)
 
             if self.count % self.check_after == 0:
                 grad_norm = np.linalg.norm(self.grad)
@@ -118,8 +119,8 @@ class LogisticRegressionOpt:
 
         return [self.w, self.count, self.cost_list]
 
-    def handle_gd(self, X, step_size, y):
-        self.grad = logistic_grad(X, y, self.w)
+    def handle_gd(self, step_size):
+        # self.grad = logistic_grad(X, y, self.w)
         self.w = self.w - step_size * self.grad
         self.count += 1
 
@@ -156,13 +157,13 @@ class LogisticRegressionOpt:
 
         while self.count < max_iter:
             X_batch, y_batch = self.get_training_batch(X, batch_size, y)
-
-            self.handle_gd(X_batch, step_size, y_batch)
+            self.grad = logistic_grad(X_batch, y_batch, self.w)
+            self.handle_gd(step_size)
 
             if self.count % self.check_after == 0:
                 grad_norm = np.linalg.norm(self.grad)
                 # disable this in benchmark
-                self.cal_metrics(X, grad_norm, y)
+                self.cal_metrics(X_batch, grad_norm, y_batch)
                 if grad_norm < tol:
                     return [self.w, self.count, self.cost_list]
 
@@ -177,7 +178,8 @@ class LogisticRegressionOpt:
         self.count = 0
         self.w = w_init
         while self.count < max_iter:
-            self.handle_gd(X, self.back_tracking_step_size(X, y, self.w, self.grad), y)
+            self.grad = logistic_grad(X, y, self.w)
+            self.handle_gd(self.back_tracking_step_size(X, y, self.w, self.grad))
 
             if self.count % self.check_after == 0:
                 grad_norm = np.linalg.norm(self.grad)
@@ -193,6 +195,6 @@ class LogisticRegressionOpt:
         cost = calc_error(y_pred, y)
         self.cost_list.append(cost)
         # disable this in benchmark
-        if self.count % (10 * self.check_after) == 0:
-            print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
+        # if self.count % (10 * self.check_after) == 0:
+        #     print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
         self.grad_norm_list.append(grad_norm)

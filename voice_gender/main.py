@@ -27,10 +27,10 @@ def load_data():
     X = (X - np.min(X, axis=0)) / (np.max(X, axis=0) - np.min(X, axis=0))
     one = np.ones((X.shape[0], 1))
     X = np.concatenate((one, X), axis=1)
-    X_train = X[:2000, :]
+    X_train = X[:3000, :]
     X_test = X[-100:, :]
     y = y.reshape((X.shape[0], 1))
-    y_train = y[:2000, :]
+    y_train = y[:3000, :]
     y_test = y[-100:]
     # mix_id = np.random.permutation(X.shape[0])
     # batch_train = mix_id[0:3000]
@@ -62,10 +62,10 @@ if __name__ == '__main__':
         gdlogreg.fit(X_train, y_train, w_init)
     t2 = time.time()
 
-    print(f'complete in {(t2 - t1)/loop}')
+    # print(f'complete in {(t2 - t1)/loop}')
 
-    # print(f'complete in {(t2 - t1)/loop}, count: {gdlogreg.count}, final cost: {gdlogreg.cost_list[-1]}, '
-    #       f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
+    print(f'complete in {(t2 - t1)/loop}, count: {gdlogreg.count}, final cost: {gdlogreg.cost_list[-1]}, '
+          f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
 
     # plt.plot(range(len(gdlogreg.cost_list)), gdlogreg.cost_list)
     # plt.show()
