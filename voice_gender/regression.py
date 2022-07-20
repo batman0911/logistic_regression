@@ -74,14 +74,14 @@ class LogisticRegressionOpt:
         step_size = self.step_size
         alpha = beta = 0.5
         count = 0
-        max_iter = 10000
+        max_iter = 10
         while cost_function(X, y, move_with_direction(w, step_size, grad)) > \
                 cost_function(X, y, w) - alpha * step_size * np.dot(grad.T, grad):
             step_size = beta * step_size
             count += 1
             self.inner_count += 1
             if count > max_iter:
-                return step_size
+                return 0.05
         return step_size
 
     def fit(self, X, y, w_init):
