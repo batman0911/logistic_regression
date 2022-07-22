@@ -3,6 +3,7 @@ import time
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.pyplot import figure
+
 figure(figsize=(8, 6), dpi=80)
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -47,9 +48,9 @@ def test_gd(loop, X_train, X_test, y_train, y_test):
     eta = 0.05
     # w_init = np.ones((X_train.shape[1], 1))
     w_init = np.random.randn(X_train.shape[1], 1)
-    gdlogreg = rg.LogisticRegressionOpt(solver='bgd',
+    gdlogreg = rg.LogisticRegressionOpt(solver='sgd_batch',
                                         tol=1e-4,
-                                        max_iter=100000,
+                                        max_iter=10000,
                                         step_size=1,
                                         batch_size=100,
                                         check_after=10)
@@ -57,7 +58,7 @@ def test_gd(loop, X_train, X_test, y_train, y_test):
     for i in range(loop):
         gdlogreg.fit(X_train, y_train, w_init)
     t2 = time.time()
-    print(f'complete in {(t2 - t1)/loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
+    print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
     # print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count},'
     #       f' final cost: {gdlogreg.cost_list[-1]}, '
     #       f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
@@ -68,7 +69,7 @@ def test_gd(loop, X_train, X_test, y_train, y_test):
         'grad_norm': gdlogreg.grad_norm_list
     }
     df = pd.DataFrame(data_loss_func)
-    df.to_csv(f'../data/output/loss_func_{gdlogreg.solver}_{gdlogreg.step_size}.csv', index=False)
+    df.to_csv(f'../data/output/loss_func_{gdlogreg.solver}_10k_{gdlogreg.step_size}.csv', index=False)
 
     plot_data(gdlogreg)
     print(f'gd accuracy: {rg.accuracy_gd(X_test, y_test, gdlogreg.w)}')
@@ -85,6 +86,7 @@ def plot_data(gdlogreg):
     plt.ylabel('Value', fontsize=16)
     plt.xlabel('Count', fontsize=16)
     plt.show()
+
 
 def plot_multiple(col, x_label, y_label, title):
     gd = pd.read_csv('../data/output/loss_func_gd.csv')
@@ -104,16 +106,10 @@ def plot_multiple(col, x_label, y_label, title):
     plt.legend()
     plt.show()
 
+
 if __name__ == '__main__':
-    # X_train, y_train, X_test, y_test = load_data()
-    # loop = 1
-    # test_sklearn(loop, X_train, X_test, y_train, y_test)
-    # test_gd(loop, X_train, X_test, y_train, y_test)
-    plot_multiple('loss_func', 'Count', 'Value', 'Gradient norm')
-
-
-
-
-
-
-
+    X_train, y_train, X_test, y_test = load_data()
+    loop = 10
+    test_sklearn(loop, X_train, X_test, y_train, y_test)
+    test_gd(loop, X_train, X_test, y_train, y_test)
+    # plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
