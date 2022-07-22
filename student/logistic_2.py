@@ -44,10 +44,10 @@ def logistic_GD_backtracking(X, y, w_init, t_init, tol = 1e-2):
     return [w, i]
 
 #load X,y
-X = np.loadtxt("../data/voice.csv", skiprows=(1),delimiter=",", usecols=(range(20)) )
+X = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=(range(20)))
 def conv(s):
     return 0 if 'f' in s.lower() else 1
-y = np.loadtxt("../data/voice.csv", skiprows=(1),delimiter=",", usecols=20,
+y = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=20,
                encoding=None, converters=conv, dtype=int)
 np.set_printoptions(precision=2)
 X = (X-np.mean(X,axis=0))/np.std(X,axis=0)

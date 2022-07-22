@@ -1,24 +1,29 @@
 np.random.seed(2)
 
-sklearn complete in 0.01177886724472046
-sklearn accuracy: 0.9621451104100947
-
 --- gd
-step_size = 0.05, max_iter = 100,000
+step_size = 0.05, max_iter = 100,000, check_after = 1000
+sklearn complete in 0.011723697185516357
+sklearn accuracy: 0.9621451104100947
 complete in 6.624091625213623, count: 100000, inner count: 0
 accuracy: 0.9700315457413249
 
 --- back tracking
-step_size = 20, max_iter_inner = 100
-complete in 0.734985601902008, count: 2050, inner count: 5700
-accuracy: 0.9716088328075709
+step_size = 20, max_iter_inner = 100, check_after = 10
+sklearn complete in 0.011670362949371339
+sklearn accuracy: 0.9621451104100947
+complete in 0.7379847645759583, count: 2050, inner count: 5700
+gd accuracy: 0.9716088328075709
 
 --- sgd
-step_size = 0.05, max_iter = 100,000
-complete in 0.7389052271842956, count: 85000, inner count: 0
-accuracy: 0.9700315457413249
+step_size = 0.05, max_iter = 100,000, check_after = 1000
+sklearn complete in 0.011716675758361817
+sklearn accuracy: 0.9621451104100947
+complete in 0.7479505777359009, count: 85000, inner count: 0
+gd accuracy: 0.9700315457413249
 
 --- sgd mini batch
 step_size = 0.05, max_iter = 100,000
-complete in 5.082834506034851, count: 100000, inner count: 0
-accuracy: 0.9700315457413249
+sklearn complete in 0.011637270450592041
+sklearn accuracy: 0.9621451104100947
+complete in 4.992650544643402, count: 100000, inner count: 0
+gd accuracy: 0.9700315457413249

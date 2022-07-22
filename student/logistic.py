@@ -17,14 +17,14 @@ def logistic_sigmoid_GD(X, y, w_init, eta, tol=1e-2):
 
 
 # load X,y
-X = np.loadtxt("../data/voice.csv", skiprows=(1), delimiter=",", usecols=(range(3)))
+X = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=(range(3)))
 
 
 def conv(s):
     return 0 if 'f' in s.lower() else 1
 
 
-y = np.loadtxt("../data/voice.csv", skiprows=(1), delimiter=",", usecols=20,
+y = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=20,
                encoding=None, converters=conv, dtype=int)
 
 one = np.ones((X.shape[0], 1))

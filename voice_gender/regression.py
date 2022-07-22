@@ -80,14 +80,14 @@ class LogisticRegressionOpt:
         step_size = self.step_size
         alpha = beta = 0.5
         count = 0
-        max_iter = 100
         while cost_function(X, y, move_with_direction(w, step_size, grad)) > \
                 cost_function(X, y, w) - alpha * step_size * np.dot(grad.T, grad):
             step_size = beta * step_size
             count += 1
             self.inner_count += 1
-            if count > max_iter:
-                return 0.05
+            # if count > max_iter:
+            #     return 0.05
+        # print(f'bgd step size: {step_size}')
         return step_size
 
     def fit(self, X, y, w_init):
@@ -192,12 +192,12 @@ class LogisticRegressionOpt:
         return [self.w, self.count, self.cost_list]
 
     def cal_metrics(self, X, grad_norm, y):
-        pass
-        # y_pred = predict(X, self.w)
-        # cost = calc_error(y_pred, y)
-        # self.cost_list.append(cost)
-        # # disable this in benchmark
-        # if self.count % (10 * self.check_after) == 0:
-        #     print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
-        # self.grad_norm_list.append(grad_norm)
+        # pass
+        y_pred = predict(X, self.w)
+        cost = calc_error(y_pred, y)
+        self.cost_list.append(cost)
+        # disable this in benchmark
+        if self.count % self.check_after == 0:
+            print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
+        self.grad_norm_list.append(grad_norm)
 
