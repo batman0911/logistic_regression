@@ -1,0 +1,24 @@
+np.random.seed(2)
+
+sklearn complete in 0.01177886724472046
+sklearn accuracy: 0.9621451104100947
+
+--- gd
+step_size = 0.05, max_iter = 100,000
+complete in 6.624091625213623, count: 100000, inner count: 0
+accuracy: 0.9700315457413249
+
+--- back tracking
+step_size = 20, max_iter_inner = 100
+complete in 0.734985601902008, count: 2050, inner count: 5700
+accuracy: 0.9716088328075709
+
+--- sgd
+step_size = 0.05, max_iter = 100,000
+complete in 0.7389052271842956, count: 85000, inner count: 0
+accuracy: 0.9700315457413249
+
+--- sgd mini batch
+step_size = 0.05, max_iter = 100,000
+complete in 5.082834506034851, count: 100000, inner count: 0
+accuracy: 0.9700315457413249

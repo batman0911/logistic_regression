@@ -44,19 +44,19 @@ def test_gd(loop, X_train, X_test, y_train, y_test):
     eta = 0.05
     # w_init = np.ones((X_train.shape[1], 1))
     w_init = np.random.randn(X_train.shape[1], 1)
-    gdlogreg = rg.LogisticRegressionOpt(solver='bgd',
+    gdlogreg = rg.LogisticRegressionOpt(solver='gd',
                                         tol=1e-4,
                                         max_iter=100000,
-                                        step_size=20,
+                                        step_size=0.05,
                                         batch_size=100,
-                                        check_after=10)
+                                        check_after=1000)
     t1 = time.time()
     for i in range(loop):
         gdlogreg.fit(X_train, y_train, w_init)
     t2 = time.time()
-    # print(f'complete in {(t2 - t1)/loop}')
-    print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, final cost: {gdlogreg.cost_list[-1]}, '
-          f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
+    print(f'complete in {(t2 - t1)/loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
+    # print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, final cost: {gdlogreg.cost_list[-1]}, '
+    #       f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
     plt.plot(range(len(gdlogreg.cost_list)), gdlogreg.cost_list)
     plt.show()
     plt.plot(range(len(gdlogreg.grad_norm_list)), gdlogreg.grad_norm_list)
@@ -66,7 +66,7 @@ def test_gd(loop, X_train, X_test, y_train, y_test):
 
 if __name__ == '__main__':
     X_train, y_train, X_test, y_test = load_data()
-    loop = 1
+    loop = 20
     test_sklearn(loop, X_train, X_test, y_train, y_test)
     test_gd(loop, X_train, X_test, y_train, y_test)
 
