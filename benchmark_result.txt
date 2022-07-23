@@ -92,6 +92,35 @@ gd accuracy: 0.9574132492113565
 
 
 
+---------------------------------- random_state = 42
+
+--- max_iter = 10K, step_size = 0.05, tol = 1e-4
+sklearn complete in 0.014357638359069825
+sklearn accuracy: 0.9826498422712934
+gd - complete in 6.343432760238647, count: 100000, inner count: 0
+gd accuracy: 0.9794952681388013
+bgd 20 - complete in 1.0823636770248413, count: 2830, inner count: 5870
+gd accuracy: 0.9779179810725552
+bgd 1 - complete in 9.38822908401489, count: 29180, inner count: 0
+gd accuracy: 0.9779179810725552
+sgd - complete in 0.4026787281036377, count: 40140, inner count: 0
+gd accuracy: 0.9747634069400631
+sgd_batch - complete in 5.262617993354797, count: 100000, inner count: 0
+gd accuracy: 0.9810725552050473
+
+
+--- max_iter = 10K, step_size = 0.05, tol = 1e-4
+sklearn complete in 0.012789130210876465
+sklearn accuracy: 0.9826498422712934
+gd - complete in 0.6311503887176514, count: 10000, inner count: 0
+gd accuracy: 0.9763406940063092
+bgd 1 - complete in 3.3557121753692627, count: 10000, inner count: 0
+gd accuracy: 0.9810725552050473
+sgd - complete in 0.10581250190734863, count: 10136, inner count: 0
+gd accuracy: 0.9763406940063092
+sgd_batch - complete in 0.5226859092712403, count: 10000, inner count: 0
+gd accuracy: 0.9763406940063092
+
 
 
 
