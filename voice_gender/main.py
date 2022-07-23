@@ -28,7 +28,7 @@ def load_data():
     one = np.ones((X.shape[0], 1))
     X = np.concatenate((one, X), axis=1)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     return X_train, y_train, X_test, y_test
 
 
@@ -42,23 +42,23 @@ def test_sklearn(loop, X_train, X_test, y_train, y_test):
     print(f'sklearn accuracy: {rg.accuracy_sk(X_test[:, 1:21], y_test, logreg)}')
 
 
-def test_gd(loop, X_train, X_test, y_train, y_test):
+def test_gd(loop, X_train, X_test, y_train, y_test, solver):
     y_train = y_train.reshape((X_train.shape[0], 1))
     y_test = y_test.reshape((X_test.shape[0], 1))
     eta = 0.05
     # w_init = np.ones((X_train.shape[1], 1))
     w_init = np.random.randn(X_train.shape[1], 1)
-    gdlogreg = rg.LogisticRegressionOpt(solver='gd',
+    gdlogreg = rg.LogisticRegressionOpt(solver=solver,
                                         tol=1e-2,
                                         max_iter=10000,
-                                        step_size=0.05,
+                                        step_size=1,
                                         batch_size=100,
                                         check_after=10)
     t1 = time.time()
     for i in range(loop):
         gdlogreg.fit(X_train, y_train, w_init)
     t2 = time.time()
-    print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
+    print(f'{solver} - complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
     # print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count},'
     #       f' final cost: {gdlogreg.cost_list[-1]}, '
     #       f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
@@ -108,8 +108,11 @@ def plot_multiple(col, x_label, y_label, title):
 
 
 if __name__ == '__main__':
-    # X_train, y_train, X_test, y_test = load_data()
-    # loop = 10
-    # test_sklearn(loop, X_train, X_test, y_train, y_test)
-    # test_gd(loop, X_train, X_test, y_train, y_test)
-    plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
+    X_train, y_train, X_test, y_test = load_data()
+    loop = 10
+    test_sklearn(loop, X_train, X_test, y_train, y_test)
+    # for solver in ['gd', 'sgd', 'sgd_batch']:
+    #     test_gd(loop, X_train, X_test, y_train, y_test, solver)
+
+    test_gd(loop, X_train, X_test, y_train, y_test, 'bgd')
+    # plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
