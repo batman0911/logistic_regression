@@ -49,16 +49,17 @@ def test_gd(loop, X_train, X_test, y_train, y_test, solver):
     # w_init = np.ones((X_train.shape[1], 1))
     w_init = np.random.randn(X_train.shape[1], 1)
     gdlogreg = rg.LogisticRegressionOpt(solver=solver,
-                                        tol=1e-2,
-                                        max_iter=10000,
-                                        step_size=1,
-                                        batch_size=100,
+                                        tol=1e-4,
+                                        max_iter=20000,
+                                        step_size=20,
+                                        batch_size=10,
                                         check_after=10)
     t1 = time.time()
     for i in range(loop):
         gdlogreg.fit(X_train, y_train, w_init)
     t2 = time.time()
-    print(f'{solver} - complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}')
+    print(f'{solver} - complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count}'
+          f', grad norm: {np.linalg.norm(gdlogreg.grad)}')
     # print(f'complete in {(t2 - t1) / loop}, count: {gdlogreg.count}, inner count: {gdlogreg.inner_count},'
     #       f' final cost: {gdlogreg.cost_list[-1]}, '
     #       f'grad norm: {np.linalg.norm(gdlogreg.grad)}')
@@ -108,11 +109,11 @@ def plot_multiple(col, x_label, y_label, title):
 
 
 if __name__ == '__main__':
-    X_train, y_train, X_test, y_test = load_data()
-    loop = 10
-    test_sklearn(loop, X_train, X_test, y_train, y_test)
+    # X_train, y_train, X_test, y_test = load_data()
+    # loop = 1
+    # test_sklearn(loop, X_train, X_test, y_train, y_test)
     # for solver in ['gd', 'sgd', 'sgd_batch']:
     #     test_gd(loop, X_train, X_test, y_train, y_test, solver)
 
-    test_gd(loop, X_train, X_test, y_train, y_test, 'bgd')
-    # plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
+    # test_gd(loop, X_train, X_test, y_train, y_test, 'bgd')
+    plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
