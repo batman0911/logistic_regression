@@ -1,6 +1,6 @@
 np.random.seed(2)
 
---------------- max_iter = 100K
+--------------- max_iter = 100,000, tol = 1e-4, step_size = 0.05, check_after = 10
 --- gd
 step_size = 0.05, check_after = 10
 sklearn complete in 0.011723697185516357
@@ -16,7 +16,6 @@ complete in 0.7379847645759583, count: 2050, inner count: 5700
 gd accuracy: 0.9716088328075709
 
 --- sgd
-step_size = 0.05, max_iter = 100,000, check_after = 10
 sklearn complete in 0.011716675758361817
 sklearn accuracy: 0.9621451104100947
 complete in 0.7479505777359009, count: 85000, inner count: 0
@@ -30,4 +29,75 @@ complete in 4.992650544643402, count: 100000, inner count: 0
 gd accuracy: 0.9700315457413249
 
 
---------------- max_iter = 10K
+--------------- max_iter = 10K, tol = 1e-4, step_size = 0.05, check_after = 10
+
+--- gd
+sklearn complete in 0.011837410926818847
+sklearn accuracy: 0.9621451104100947
+complete in 0.8194644927978516, count: 10000, inner count: 0
+gd accuracy: 0.9589905362776026
+
+
+--- backtracking - step size = 1
+sklearn complete in 0.011702728271484376
+sklearn accuracy: 0.9621451104100947
+complete in 3.2658313512802124, count: 10000, inner count: 0
+gd accuracy: 0.973186119873817
+
+
+--- sgd
+sklearn complete in 0.012273263931274415
+sklearn accuracy: 0.9621451104100947
+complete in 0.10979695320129394, count: 10136, inner count: 0
+gd accuracy: 0.9495268138801262
+
+--- sgd batch
+sklearn complete in 0.01148974895477295
+sklearn accuracy: 0.9621451104100947
+complete in 0.5386996984481811, count: 10000, inner count: 0
+gd accuracy: 0.9542586750788643
+
+
+--------------- max_iter = 10K, tol = 1e-2, step_size = 0.05, check_after = 10
+
+--- gd 
+sklearn complete in 0.012237071990966797
+sklearn accuracy: 0.9621451104100947
+complete in 0.6324508190155029, count: 10000, inner count: 0
+gd accuracy: 0.9589905362776026
+
+--- bgd step_size = 20
+sklearn complete in 0.011147022247314453
+sklearn accuracy: 0.9621451104100947
+complete in 0.026348590850830078, count: 80, inner count: 4
+gd accuracy: 0.9558359621451105
+
+--- bgd step_size = 1
+sklearn complete in 0.010813236236572266
+sklearn accuracy: 0.9621451104100947
+complete in 0.1849045753479004, count: 610, inner count: 0
+gd accuracy: 0.9621451104100947
+
+--- sgd
+sklearn complete in 0.010832548141479492
+sklearn accuracy: 0.9621451104100947
+complete in 0.11517882347106934, count: 7680, inner count: 0
+gd accuracy: 0.9463722397476341
+
+--- sgd batch
+sklearn complete in 0.011662006378173828
+sklearn accuracy: 0.9621451104100947
+complete in 0.5543169975280762, count: 10000, inner count: 0
+gd accuracy: 0.9574132492113565
+
+
+
+
+
+
+
+
+
+
+
+
