@@ -78,15 +78,17 @@ class LogisticRegressionOpt:
 
     def back_tracking_step_size(self, X, y, w, grad):
         step_size = self.step_size
-        alpha = beta = 0.5
+        alpha = 1e-4
+        beta = 0.5
         count = 0
+        # max_iter = 10
         while cost_function(X, y, move_with_direction(w, step_size, grad)) > \
                 cost_function(X, y, w) - alpha * step_size * np.dot(grad.T, grad):
             step_size = beta * step_size
             count += 1
             self.inner_count += 1
             # if count > max_iter:
-            #     return 0.05
+            #     return 0.01
         # print(f'bgd step size: {step_size}')
         return step_size
 
