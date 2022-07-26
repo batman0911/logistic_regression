@@ -51,9 +51,11 @@ def test_gd(loop, X_train, X_test, y_train, y_test, solver):
     gdlogreg = rg.LogisticRegressionOpt(solver=solver,
                                         tol=1e-4,
                                         max_iter=20000,
-                                        step_size=20,
+                                        step_size=0.3,
                                         batch_size=10,
-                                        check_after=10)
+                                        check_after=2)
+    gdlogreg.X_test = X_test
+    gdlogreg.y_test = y_test
     t1 = time.time()
     for i in range(loop):
         gdlogreg.fit(X_train, y_train, w_init)
@@ -109,11 +111,11 @@ def plot_multiple(col, x_label, y_label, title):
 
 
 if __name__ == '__main__':
-    # X_train, y_train, X_test, y_test = load_data()
-    # loop = 1
-    # test_sklearn(loop, X_train, X_test, y_train, y_test)
+    X_train, y_train, X_test, y_test = load_data()
+    loop = 1
+    test_sklearn(loop, X_train, X_test, y_train, y_test)
     # for solver in ['gd', 'sgd', 'sgd_batch']:
     #     test_gd(loop, X_train, X_test, y_train, y_test, solver)
 
-    # test_gd(loop, X_train, X_test, y_train, y_test, 'bgd')
-    plot_multiple('loss_func', 'Count', 'Value', 'Loss function')
+    test_gd(loop, X_train, X_test, y_train, y_test, 'sgd')
+    # plot_multiple('loss_func', 'Count', 'Value', 'Loss function')

@@ -75,6 +75,8 @@ class LogisticRegressionOpt:
         self.cost_list = []
         self.check_after = check_after
         self.batch_size = batch_size
+        self.X_test = None
+        self.y_test = None
 
     def back_tracking_step_size(self, X, y, w, grad):
         step_size = self.step_size
@@ -82,8 +84,10 @@ class LogisticRegressionOpt:
         beta = 0.5
         count = 0
         # max_iter = 10
+        old_cost = cost_function(X, y, w)
+        grad_prd = alpha * np.dot(grad.T, grad)
         while cost_function(X, y, move_with_direction(w, step_size, grad)) > \
-                cost_function(X, y, w) - alpha * step_size * np.dot(grad.T, grad):
+                old_cost - step_size * grad_prd:
             step_size = beta * step_size
             count += 1
             self.inner_count += 1
@@ -155,6 +159,7 @@ class LogisticRegressionOpt:
                     # disable this in benchmark
                     self.cal_metrics(X, grad_norm, y)
                     if grad_norm < tol:
+                            # or accuracy_gd(self.X_test, self.y_test, self.w) > 0.99:
                         return [self.w, self.count, self.cost_list]
 
         return [self.w, self.count, self.cost_list]
