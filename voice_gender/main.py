@@ -1,5 +1,5 @@
 import time
-
+import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.pyplot import figure
@@ -13,6 +13,7 @@ import regression as rg
 
 np.random.seed(2)
 
+local_path = os.getcwd()
 
 def conv(s):
     return 0 if 'f' in s.lower() else 1
@@ -20,8 +21,8 @@ def conv(s):
 
 def load_data():
     global X_train, y_train
-    X = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=(range(20)))
-    y = np.loadtxt("../data/input/voice.csv", skiprows=(1), delimiter=",", usecols=20,
+    X = np.loadtxt(os.path.join(local_path, "data/input/voice.csv"), skiprows=(1), delimiter=",", usecols=(range(20)))
+    y = np.loadtxt(os.path.join(local_path, "data/input/voice.csv"), skiprows=(1), delimiter=",", usecols=20,
                    encoding=None, converters=conv, dtype=int)
     np.set_printoptions(precision=4)
     X = (X - np.min(X, axis=0)) / (np.max(X, axis=0) - np.min(X, axis=0))
@@ -72,7 +73,7 @@ def test_gd(loop, X_train, X_test, y_train, y_test, solver):
         'grad_norm': gdlogreg.grad_norm_list
     }
     df = pd.DataFrame(data_loss_func)
-    df.to_csv(f'../data/output/loss_func_{gdlogreg.solver}_10k_1e-2_{gdlogreg.step_size}.csv', index=False)
+    df.to_csv(os.path.join(local_path, f'data/output/loss_func_{gdlogreg.solver}_10k_1e-2_{gdlogreg.step_size}.csv'), index=False)
 
     plot_data(gdlogreg)
     print(f'gd accuracy: {rg.accuracy_gd(X_test, y_test, gdlogreg.w)}')
@@ -92,11 +93,11 @@ def plot_data(gdlogreg):
 
 
 def plot_multiple(col, x_label, y_label, title):
-    gd = pd.read_csv('../data/output/loss_func_gd_10k_1e-2_0.05.csv')
-    bgd = pd.read_csv('../data/output/loss_func_bgd.csv')
-    bgd_1 = pd.read_csv('../data/output/loss_func_bgd_1.csv')
-    sgd = pd.read_csv('../data/output/loss_func_sgd_10k_0.05.csv')
-    sgd_batch = pd.read_csv('../data/output/loss_func_sgd_batch_10k_0.05.csv')
+    gd = pd.read_csv(os.path.join(local_path, 'data/output/loss_func_gd_10k_1e-2_0.05.csv'))
+    bgd = pd.read_csv(os.path.join(local_path, 'data/output/loss_func_bgd.csv'))
+    bgd_1 = pd.read_csv(os.path.join(local_path, 'data/output/loss_func_bgd_1.csv'))
+    sgd = pd.read_csv(os.path.join(local_path, 'data/output/loss_func_sgd_10k_0.05.csv'))
+    sgd_batch = pd.read_csv(os.path.join(local_path, 'data/output/loss_func_sgd_batch_10k_0.05.csv'))
     plt.plot(gd['count'], gd[col], label='gd')
     plt.plot(bgd['count'], bgd[col], label='bgd_20')
     plt.plot(bgd_1['count'], bgd_1[col], label='bgd_1')

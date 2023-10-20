@@ -199,12 +199,12 @@ class LogisticRegressionOpt:
         return [self.w, self.count, self.cost_list]
 
     def cal_metrics(self, X, grad_norm, y):
-        pass
-        # y_pred = predict(X, self.w)
-        # cost = calc_error(y_pred, y)
-        # self.cost_list.append(cost)
-        # # disable this in benchmark
-        # if self.count % self.check_after == 0:
-        #     print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
-        # self.grad_norm_list.append(grad_norm)
+        # pass
+        y_pred = predict(X, self.w)
+        cost = calc_error(y_pred, y)
+        self.cost_list.append(cost)
+        # disable this in benchmark
+        if self.count % self.check_after == 0:
+            print(f'count: {self.count}, cost: {cost}, grad norm: {grad_norm}')
+        self.grad_norm_list.append(grad_norm)
 
